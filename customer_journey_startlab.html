@@ -1,0 +1,511 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.container { padding: 1.5rem 1rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.phase-label { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.row { display: flex; align-items: stretch; gap: 0; min-height: 64px; }
+.row-header { width: 90px; flex-shrink: 0; display: flex; align-items: center; padding-right: 10px; }
+.row-header span { font-size: 11px; color: var(--color-text-tertiary); font-weight: 500; text-align: right; line-height: 1.3; }
+.track { flex: 1; display: flex; align-items: center; position: relative; border-left: 1.5px solid var(--color-border-tertiary); padding: 6px 0; }
+.card { border-radius: 8px; padding: 7px 10px; font-size: 12px; display: flex; flex-direction: column; gap: 2px; position: relative; cursor: pointer; transition: filter 0.15s; border: 0.5px solid transparent; }
+.card:hover { filter: brightness(0.95); }
+.card-title { font-weight: 500; font-size: 12px; line-height: 1.3; }
+.card-sub { font-size: 10.5px; opacity: 0.75; line-height: 1.3; }
+.badge { display: inline-block; font-size: 9.5px; padding: 1px 5px; border-radius: 4px; font-weight: 500; margin-top: 2px; align-self: flex-start; }
+.connector { position: absolute; left: -1px; width: 1.5px; background: var(--color-border-tertiary); }
+.arrow-down { width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--color-border-secondary); position: absolute; left: -4px; bottom: -7px; z-index: 2; }
+.col-header { font-size: 10px; font-weight: 500; text-align: center; color: var(--color-text-secondary); padding-bottom: 4px; border-bottom: 1.5px solid var(--color-border-tertiary); margin-bottom: 4px; }
+.weeks-row { display: flex; gap: 0; flex: 1; }
+.week-col { flex: 1; position: relative; display: flex; flex-direction: column; padding: 2px 3px; }
+.week-col + .week-col { border-left: 0.5px dashed var(--color-border-tertiary); }
+.detail-panel { display: none; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: 10px; padding: 12px 14px; margin-top: 8px; font-size: 12px; color: var(--color-text-secondary); }
+.detail-panel.open { display: block; }
+.detail-panel h4 { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.detail-panel ul { padding-left: 14px; display: flex; flex-direction: column; gap: 3px; }
+
+/* Colors */
+.bg-purple-light { background: #EEEDFE; border-color: #AFA9EC; }
+.txt-purple { color: #3C3489; }
+.badge-purple { background: #CECBF6; color: #3C3489; }
+
+.bg-teal-light { background: #E1F5EE; border-color: #5DCAA5; }
+.txt-teal { color: #085041; }
+.badge-teal { background: #9FE1CB; color: #085041; }
+
+.bg-amber-light { background: #FAEEDA; border-color: #EF9F27; }
+.txt-amber { color: #633806; }
+.badge-amber { background: #FAC775; color: #633806; }
+
+.bg-coral-light { background: #FAECE7; border-color: #F0997B; }
+.txt-coral { color: #4A1B0C; }
+.badge-coral { background: #F5C4B3; color: #4A1B0C; }
+
+.bg-blue-light { background: #E6F1FB; border-color: #85B7EB; }
+.txt-blue { color: #042C53; }
+.badge-blue { background: #B5D4F4; color: #042C53; }
+
+.bg-green-light { background: #EAF3DE; border-color: #97C459; }
+.txt-green { color: #173404; }
+.badge-green { background: #C0DD97; color: #173404; }
+
+.bg-gray-light { background: #F1EFE8; border-color: #B4B2A9; }
+.txt-gray { color: #2C2C2A; }
+.badge-gray { background: #D3D1C7; color: #2C2C2A; }
+
+@media (prefers-color-scheme: dark) {
+  .bg-purple-light { background: #3C3489; border-color: #7F77DD; }
+  .txt-purple { color: #EEEDFE; }
+  .badge-purple { background: #534AB7; color: #EEEDFE; }
+
+  .bg-teal-light { background: #085041; border-color: #1D9E75; }
+  .txt-teal { color: #E1F5EE; }
+  .badge-teal { background: #0F6E56; color: #E1F5EE; }
+
+  .bg-amber-light { background: #633806; border-color: #EF9F27; }
+  .txt-amber { color: #FAEEDA; }
+  .badge-amber { background: #854F0B; color: #FAC775; }
+
+  .bg-coral-light { background: #4A1B0C; border-color: #D85A30; }
+  .txt-coral { color: #FAECE7; }
+  .badge-coral { background: #712B13; color: #F5C4B3; }
+
+  .bg-blue-light { background: #042C53; border-color: #378ADD; }
+  .txt-blue { color: #E6F1FB; }
+  .badge-blue { background: #0C447C; color: #B5D4F4; }
+
+  .bg-green-light { background: #173404; border-color: #639922; }
+  .txt-green { color: #EAF3DE; }
+  .badge-green { background: #27500A; color: #C0DD97; }
+
+  .bg-gray-light { background: #2C2C2A; border-color: #888780; }
+  .txt-gray { color: #F1EFE8; }
+  .badge-gray { background: #5F5E5A; color: #F1EFE8; }
+}
+</style>
+
+<div class="container">
+  <h2 style="sr-only">Journey del cliente Start Lab</h2>
+
+  <div style="margin-bottom: 1.2rem;">
+    <p style="font-size: 13px; color: var(--color-text-secondary); line-height: 1.6;">Hace clic en cualquier etapa para ver el detalle. Las rutas varían según el tipo de cliente.</p>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background:#7F77DD"></div><span>Todos los clientes</span></div>
+    <div class="legend-item"><div class="dot" style="background:#1D9E75"></div><span>Con Startfly</span></div>
+    <div class="legend-item"><div class="dot" style="background:#BA7517"></div><span>Sin Startfly (embudo propio)</span></div>
+    <div class="legend-item"><div class="dot" style="background:#378ADD"></div><span>Principiantes / reestructuración</span></div>
+    <div class="legend-item"><div class="dot" style="background:#D85A30"></div><span>Mentorías paralelas</span></div>
+  </div>
+
+  <!-- Phase headers -->
+  <div class="row" style="min-height: 28px;">
+    <div class="row-header"></div>
+    <div style="flex:1; display:flex; border-left: 1.5px solid transparent;">
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Día 0</div></div>
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Día 3–4</div></div>
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Sem 1</div></div>
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Sem 2</div></div>
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Sem 3</div></div>
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Sem 4</div></div>
+      <div style="flex:0 0 14.28%; text-align:center;"><div class="col-header">Sem 5–6</div></div>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Sesión onboarding ---- -->
+  <div class="timeline-row" id="section-onboarding">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Inicio</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-onboarding')">
+              <span class="card-title txt-purple">Sesión onboarding</span>
+              <span class="card-sub txt-purple">Genoma · cliente · nueva manera</span>
+              <span class="badge badge-purple">Día 0</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-plan')">
+              <span class="card-title txt-purple">Sesión de plan</span>
+              <span class="card-sub txt-purple">Validación, oferta, cliente correcto</span>
+              <span class="badge badge-purple">Día 3–4</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 57.14%;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="d-onboarding" class="detail-panel">
+      <h4>Sesión de onboarding — Día 0</h4>
+      <ul>
+        <li>Completar Genoma del cliente</li>
+        <li>Definir "nueva manera" y cliente correcto</li>
+        <li>Buscar 5 perfiles de LinkedIn y generar perfil con Claude</li>
+        <li>Crear documento ME6 - CLIENTE Plan de Acción T1</li>
+        <li>Si tiene Startfly → completar Ficha Startfly</li>
+      </ul>
+    </div>
+    <div id="d-plan" class="detail-panel">
+      <h4>Sesión de plan — Día 3–4</h4>
+      <ul>
+        <li>Revisión y claridad de situación actual</li>
+        <li>Validar cliente correcto y nueva manera</li>
+        <li>Definir oferta</li>
+        <li>Establecer próximos pasos</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Setup + Accountability (paralelos) ---- -->
+  <div class="timeline-row" style="margin-top: 4px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Setup</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 28.56%;"></div>
+          <div class="week-col" style="flex: 0 0 28.56%;">
+            <div class="card bg-purple-light" onclick="toggle('d-setup')">
+              <span class="card-title txt-purple">Sesión de setup</span>
+              <span class="card-sub txt-purple">Validación MKT · sistema de ventas</span>
+              <span class="badge badge-purple">Día 7–14</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 43.12%;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="d-setup" class="detail-panel">
+      <h4>Sesión de setup — Día 7–14</h4>
+      <ul>
+        <li>Validar mensaje de marketing</li>
+        <li>Armar sistema de ventas</li>
+        <li>Grabar mensajes de MKT (script)</li>
+        <li>Sesión de accountability: ver avance con el coach</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div style="border-top: 1.5px dashed var(--color-border-tertiary); margin: 12px 0 4px 90px; position:relative;">
+    <span style="position:absolute; top:-9px; left:12px; background: var(--color-background-primary); padding: 0 6px; font-size:10px; color:var(--color-text-tertiary); font-weight:500;">SESIONES SEMANALES — SEGÚN TIPO DE CLIENTE</span>
+  </div>
+
+  <!-- ---- ROW: SEM 1 — Todos ---- -->
+  <div class="timeline-row" style="margin-top:6px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Todos</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 28.56%;"></div>
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-sem1')">
+              <span class="card-title txt-purple">Sem 1 — Promesa</span>
+              <span class="card-sub txt-purple">Validación + inicio FFW</span>
+              <span class="badge badge-purple">Sem 1</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-sem2')">
+              <span class="card-title txt-purple">Sem 2 — FFW</span>
+              <span class="card-sub txt-purple">Culminar validación · grabar FFW</span>
+              <span class="badge badge-purple">Sem 2</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-sem3')">
+              <span class="card-title txt-purple">Sem 3 — Ventas</span>
+              <span class="card-sub txt-purple">Sistema ventas · oferta · landing</span>
+              <span class="badge badge-purple">Sem 3</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-sem4')">
+              <span class="card-title txt-purple">Sem 4 — Lanzamiento</span>
+              <span class="card-sub txt-purple">Fecha · guión cierre · setteo</span>
+              <span class="badge badge-purple">Sem 4</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 14.28%;">
+            <div class="card bg-purple-light" onclick="toggle('d-sem56')">
+              <span class="card-title txt-purple">Sem 5–6 — Cierre</span>
+              <span class="card-sub txt-purple">Setter · KPIs · tracker · escalar</span>
+              <span class="badge badge-purple">Sem 5–6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="d-sem1" class="detail-panel">
+      <h4>Sem 1 — Promesa y FFW</h4>
+      <ul>
+        <li>Validación de promesa con encuesta / OTO / GF</li>
+        <li>Primer borrador completo de FFW (4–8 hs, corrido)</li>
+        <li>Leer el FFW 2–3 veces para verificar coherencia</li>
+        <li>Si corresponde: reestructuración del programa → "Crea tu programa de alto valor"</li>
+      </ul>
+    </div>
+    <div id="d-sem2" class="detail-panel">
+      <h4>Sem 2 — FFW y sistema de ventas</h4>
+      <ul>
+        <li>Culminar validación de promesa</li>
+        <li>Si FFW listo: grabar FFW → ir a mentoría de webinar</li>
+        <li>Si FFW no listo: diagnosticar estancamiento y desafiar</li>
+        <li>Revisar en mentoría de sistema de ventas: landings y guiones de ads</li>
+        <li>Si hay problemas de configuración → mentoría técnica</li>
+      </ul>
+    </div>
+    <div id="d-sem3" class="detail-panel">
+      <h4>Sem 3 — Sistema de ventas y oferta</h4>
+      <ul>
+        <li>Revisar si culminó sistema de ventas (embudo, anuncios, secuencias email y WS)</li>
+        <li>Corroborar que la landing cuente con los elementos clave de optin</li>
+        <li>Crear oferta y validar en mentoría de promesa</li>
+        <li>Planificar estrategia de lanzamiento</li>
+        <li>Si corresponde: grabación y estructuración de programa en LMS</li>
+      </ul>
+    </div>
+    <div id="d-sem4" class="detail-panel">
+      <h4>Sem 4 — Lanzamiento y guión de venta</h4>
+      <ul>
+        <li>Revisar si culminó sistema de ventas</li>
+        <li>Acordar fecha de lanzamiento</li>
+        <li>Si es FB ADS: mentoría técnica para verificar configuración</li>
+        <li>Primer borrador del guión de cierre y setteo</li>
+        <li>Grabar 5 videos con pitch y oferta → compartir con coach → llevar a mentoría de cierre</li>
+      </ul>
+    </div>
+    <div id="d-sem56" class="detail-panel">
+      <h4>Sem 5–6 — Lanzamiento y cierre</h4>
+      <ul>
+        <li>Ver entrenamiento setter y crear script propio</li>
+        <li>Llenar trackers (FB ADS / orgánico / setter / cierre)</li>
+        <li>Verificar todo listo para cierre de ventas</li>
+        <li>Preparar PRE-PITCH para mentoría de ventas (grabarse en llamadas)</li>
+        <li>Sem 6: verificar KPIs, optimizar campañas, pedir CEO Dashboard</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Con Startfly ---- -->
+  <div class="timeline-row" style="margin-top:4px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Con Startfly</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 28.56%;"></div>
+          <div class="week-col" style="flex: 0 0 28.56%;">
+            <div class="card bg-teal-light" onclick="toggle('d-startfly')">
+              <span class="card-title txt-teal">Instalación Startfly</span>
+              <span class="card-sub txt-teal">Cuenta · ficha de datos · onboarding</span>
+              <span class="badge badge-teal">Sem 1–2 paralelo</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 42.84%;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="d-startfly" class="detail-panel">
+      <h4>Ruta con Startfly — Sem 1–2 (paralelo)</h4>
+      <ul>
+        <li>Crear cuenta en Startfly (ver video completo antes)</li>
+        <li>Completar ficha de datos para instalación</li>
+        <li>Compartir calendario de instalador (luego de culminar promesa)</li>
+        <li>El equipo de Startfly entrega el embudo instalado</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Sin Startfly ---- -->
+  <div class="timeline-row" style="margin-top:4px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Sin Startfly</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 42.84%;"></div>
+          <div class="week-col" style="flex: 0 0 28.56%;">
+            <div class="card bg-amber-light" onclick="toggle('d-nofly')">
+              <span class="card-title txt-amber">Creación de embudo</span>
+              <span class="card-sub txt-amber">Evergreen · emails · WS</span>
+              <span class="badge badge-amber">Sem 2–3</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 28.56%;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="d-nofly" class="detail-panel">
+      <h4>Ruta sin Startfly — Sem 2–3</h4>
+      <ul>
+        <li>Definir estrategia según tipo de cliente (evergreen u otro)</li>
+        <li>Crear sistema evergreen: landing, página de gracias, secuencias de email y WhatsApp</li>
+        <li>Asistir a mentoría de sistema de ventas con avances</li>
+        <li>Si hay problemas de configuración → mentoría técnica</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Principiantes ---- -->
+  <div class="timeline-row" style="margin-top:4px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Principiantes</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 28.56%;"></div>
+          <div class="week-col" style="flex: 0 0 57.12%;">
+            <div class="card bg-blue-light" onclick="toggle('d-princ')">
+              <span class="card-title txt-blue">Reestructuración de programa</span>
+              <span class="card-sub txt-blue">Visualización · módulos · grabación · LMS</span>
+              <span class="badge badge-blue">Sem 1 al 4 (paralelo)</span>
+            </div>
+          </div>
+          <div class="week-col" style="flex: 0 0 14.28%;"></div>
+        </div>
+      </div>
+    </div>
+    <div id="d-princ" class="detail-panel">
+      <h4>Ruta principiantes / reestructuración — Sem 1 al 4</h4>
+      <ul>
+        <li>Sem 1: Ver curso "Crea tu programa de alto valor" y definir módulos centrales</li>
+        <li>Sem 2: Redirigir a sesiones de principiantes</li>
+        <li>Sem 3: Tareas de grabación y estructuración en plataforma LMS</li>
+        <li>Sem 4: Finalización de grabación → mentoría de promesa y programa</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Mentorías paralelas ---- -->
+  <div class="timeline-row" style="margin-top:4px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Mentorías</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 28.56%;"></div>
+          <div class="week-col" style="flex: 0 0 71.44%;">
+            <div class="card bg-coral-light" onclick="toggle('d-mentorias')">
+              <span class="card-title txt-coral">Mentorías continuas (todo el proceso)</span>
+              <span class="card-sub txt-coral">Setup · anuncios · cierre · setter · webinar · técnica</span>
+              <span class="badge badge-coral">Sem 1 → 6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="d-mentorias" class="detail-panel">
+      <h4>Mentorías paralelas durante todo el proceso</h4>
+      <ul>
+        <li>Mentoría de webinar / FFW (Sem 2+)</li>
+        <li>Mentoría de sistema de ventas (Sem 2–3)</li>
+        <li>Mentoría de anuncios y análisis / LinkedIn (Sem 1+)</li>
+        <li>Mentoría de cierre (Sem 4+, hasta lograr +20% de cierre)</li>
+        <li>Mentoría de setter (Sem 5+, si hay problemas de setter)</li>
+        <li>Mentoría técnica (configuración de campañas)</li>
+        <li>Mentoría de promesa y programa (principiantes)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Divider post lanzamiento -->
+  <div style="border-top: 1.5px dashed var(--color-border-tertiary); margin: 14px 0 4px 90px; position:relative;">
+    <span style="position:absolute; top:-9px; left:12px; background: var(--color-background-primary); padding: 0 6px; font-size:10px; color:var(--color-text-tertiary); font-weight:500;">POST-LANZAMIENTO Y SEGUIMIENTO</span>
+  </div>
+
+  <!-- ---- ROW: Post launch ---- -->
+  <div class="timeline-row" style="margin-top:6px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Post-lanzamiento</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 71.4%;"></div>
+          <div class="week-col" style="flex: 0 0 28.56%;">
+            <div class="card bg-green-light" onclick="toggle('d-post')">
+              <span class="card-title txt-green">Sesión post-lanzamiento</span>
+              <span class="card-sub txt-green">Métricas · KPIs · optimización</span>
+              <span class="badge badge-green">Sem 7–8</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="d-post" class="detail-panel">
+      <h4>Sesión post-lanzamiento — Sem 7–8 (7–14 días después del lanzamiento)</h4>
+      <ul>
+        <li>Evaluación de primeros resultados de campañas</li>
+        <li>Revisión de KPIs: CPL, agendas, asistencias, cierres (ADS y orgánico)</li>
+        <li>Verificar métricas de FFW en Wistia (mín. 200 vistas: Play Rate +70%, Engagement +30%)</li>
+        <li>Asistir a mentorías de setteo, cierre, anuncios y análisis</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ---- ROW: Quincenales/mensuales ---- -->
+  <div class="timeline-row" style="margin-top:4px;">
+    <div class="row" style="align-items:flex-start;">
+      <div class="row-header" style="padding-top:8px;"><span>Recurrente</span></div>
+      <div class="track">
+        <div class="weeks-row">
+          <div class="week-col" style="flex: 0 0 71.4%;"></div>
+          <div class="week-col" style="flex: 0 0 28.56%;">
+            <div class="card bg-gray-light" onclick="toggle('d-recurrente')">
+              <span class="card-title txt-gray">Seguimiento quincenal / mensual</span>
+              <span class="card-sub txt-gray">Trackers · facturación · renovación o upsell</span>
+              <span class="badge badge-gray">Recurrente</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="d-recurrente" class="detail-panel">
+      <h4>Sesiones de seguimiento quincenal / mensual</h4>
+      <ul>
+        <li>Solicitar Tracker y CEO Dashboard en cada reunión</li>
+        <li>Metas: +5k → +10k → +20k/mes</li>
+        <li>Errores comunes de escalado: poco volumen (MKT) o poca conversión comercial</li>
+        <li>Si no llega a +20k → preparar para renovación con módulo de Finanzas ordenadas</li>
+        <li>Si llega recurrentemente a +20k (2 meses seguidos) → preparar upsell</li>
+        <li>Verificar por DM semanal (nunca más de 1 semana sin contacto)</li>
+        <li>Actualizar HubSpot (gestor de clientes)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- KPIs box -->
+  <div style="margin-top: 20px; margin-left: 90px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    <div style="background: var(--color-background-secondary); border-radius: 10px; padding: 12px 14px; border: 0.5px solid var(--color-border-tertiary);">
+      <p style="font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">KPIs ADS saludables</p>
+      <div style="font-size: 12px; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 4px;">
+        <div style="display:flex;justify-content:space-between;"><span>100 leads →</span><span style="font-weight:500;color:var(--color-text-primary)">20 cualifican</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>20 cualifican →</span><span style="font-weight:500;color:var(--color-text-primary)">5–10 agendan</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>10 agendan →</span><span style="font-weight:500;color:var(--color-text-primary)">3–7 asisten</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>10 asisten →</span><span style="font-weight:500;color:var(--color-text-primary)">1–2 cierres (20%)</span></div>
+      </div>
+    </div>
+    <div style="background: var(--color-background-secondary); border-radius: 10px; padding: 12px 14px; border: 0.5px solid var(--color-border-tertiary);">
+      <p style="font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">KPIs orgánico / setter</p>
+      <div style="font-size: 12px; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 4px;">
+        <div style="display:flex;justify-content:space-between;"><span>100 contactos →</span><span style="font-weight:500;color:var(--color-text-primary)">20 conversaciones</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>20 conv. →</span><span style="font-weight:500;color:var(--color-text-primary)">4–6 agendas/día</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Asistencia:</span><span style="font-weight:500;color:var(--color-text-primary)">75%</span></div>
+        <div style="display:flex;justify-content:space-between;"><span>Cierre:</span><span style="font-weight:500;color:var(--color-text-primary)">20%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size: 11px; color: var(--color-text-tertiary); margin-top: 14px; margin-left: 90px;">Haz clic en cualquier etapa para ver el detalle completo.</p>
+</div>
+
+<script>
+function toggle(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.detail-panel.open').forEach(p => p.classList.remove('open'));
+  if (!wasOpen) el.classList.add('open');
+}
+</script>
