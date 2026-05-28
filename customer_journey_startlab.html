@@ -191,106 +191,40 @@ body { font-family: var(--font-sans); }
     </div>
   </div>
 
-  <!-- Divider -->
-  <div style="border-top: 1.5px dashed var(--color-border-tertiary); margin: 12px 0 4px 90px; position:relative;">
-    <span style="position:absolute; top:-9px; left:12px; background: var(--color-background-primary); padding: 0 6px; font-size:10px; color:var(--color-text-tertiary); font-weight:500;">SESIONES SEMANALES — SEGÚN TIPO DE CLIENTE</span>
-  </div>
-
-  <!-- ---- ROW: SEM 1 — Todos ---- -->
-  <div class="timeline-row" style="margin-top:6px;">
+  <!-- ---- ROW: Accountability ---- -->
+  <div class="timeline-row" style="margin-top:4px;">
     <div class="row" style="align-items:flex-start;">
-      <div class="row-header" style="padding-top:8px;"><span>Todos</span></div>
+      <div class="row-header" style="padding-top:8px;"><span>Accountability</span></div>
       <div class="track">
         <div class="weeks-row">
           <div class="week-col" style="flex: 0 0 28.56%;"></div>
-          <div class="week-col" style="flex: 0 0 14.28%;">
-            <div class="card bg-purple-light" onclick="toggle('d-sem1')">
-              <span class="card-title txt-purple">Sem 1 — Genoma de Marketing</span>
-              <span class="card-sub txt-purple">Validación + inicio FFW</span>
-              <span class="badge badge-purple">Sem 1</span>
-            </div>
-          </div>
-          <div class="week-col" style="flex: 0 0 14.28%;">
-            <div class="card bg-purple-light" onclick="toggle('d-sem2')">
-              <span class="card-title txt-purple">Sem 2 — FFW</span>
-              <span class="card-sub txt-purple">Culminar validación · grabar FFW</span>
-              <span class="badge badge-purple">Sem 2</span>
-            </div>
-          </div>
-          <div class="week-col" style="flex: 0 0 14.28%;">
-            <div class="card bg-purple-light" onclick="toggle('d-sem3')">
-              <span class="card-title txt-purple">Sem 3 — Ventas</span>
-              <span class="card-sub txt-purple">Sistema ventas · oferta · landing</span>
-              <span class="badge badge-purple">Sem 3</span>
-            </div>
-          </div>
-          <div class="week-col" style="flex: 0 0 14.28%;">
-            <div class="card bg-purple-light" onclick="toggle('d-sem4')">
-              <span class="card-title txt-purple">Sem 4 — Lanzamiento</span>
-              <span class="card-sub txt-purple">Fecha · guión cierre · setteo</span>
-              <span class="badge badge-purple">Sem 4</span>
-            </div>
-          </div>
-          <div class="week-col" style="flex: 0 0 14.28%;">
-            <div class="card bg-purple-light" onclick="toggle('d-sem56')">
-              <span class="card-title txt-purple">Sem 5–6 — Cierre</span>
-              <span class="card-sub txt-purple">Setter · KPIs · tracker · escalar</span>
-              <span class="badge badge-purple">Sem 5–6</span>
+          <div class="week-col" style="flex: 0 0 71.44%;">
+            <div class="card bg-purple-light" onclick="toggle('d-accountability')">
+              <span class="card-title txt-purple">Sesiones de Accountability</span>
+              <span class="card-sub txt-purple">Seguimiento semanal · avances · desafíos</span>
+              <span class="badge badge-purple">Sem 1 → 6</span>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div id="d-sem1" class="detail-panel">
-      <h4>Sem 1 — Genoma de Marketing y FFW</h4>
+    <div id="d-accountability" class="detail-panel">
+      <h4>Sesiones de Accountability — Sem 1 al 6</h4>
       <ul>
-        <li>Validación de Genoma de Marketing con encuesta / OTO / GF</li>
-        <li>Primer borrador completo de FFW (4–8 hs, corrido)</li>
-        <li>Leer el FFW 2–3 veces para verificar coherencia</li>
-        <li>Si corresponde: reestructuración del programa → "Crea tu programa de alto valor"</li>
-      </ul>
-    </div>
-    <div id="d-sem2" class="detail-panel">
-      <h4>Sem 2 — FFW y sistema de ventas</h4>
-      <ul>
-        <li>Culminar validación de Genoma de Marketing</li>
-        <li>Si FFW listo: grabar FFW → ir a mentoría de webinar</li>
-        <li>Si FFW no listo: diagnosticar estancamiento y desafiar</li>
-        <li>Revisar en mentoría de sistema de ventas: landings y guiones de ads</li>
-        <li>Si hay problemas de configuración → mentoría técnica</li>
-      </ul>
-    </div>
-    <div id="d-sem3" class="detail-panel">
-      <h4>Sem 3 — Sistema de ventas y oferta</h4>
-      <ul>
-        <li>Revisar si culminó sistema de ventas (embudo, anuncios, secuencias email y WS)</li>
-        <li>Corroborar que la landing cuente con los elementos clave de optin</li>
-        <li>Crear oferta y validar en mentoría de Genoma de Marketing</li>
-        <li>Planificar estrategia de lanzamiento</li>
-        <li>Si corresponde: grabación y estructuración de programa en LMS</li>
-      </ul>
-    </div>
-    <div id="d-sem4" class="detail-panel">
-      <h4>Sem 4 — Lanzamiento y guión de venta</h4>
-      <ul>
-        <li>Revisar si culminó sistema de ventas</li>
-        <li>Acordar fecha de lanzamiento</li>
-        <li>Si es FB ADS: mentoría técnica para verificar configuración</li>
-        <li>Primer borrador del guión de cierre y setteo</li>
-        <li>Grabar 5 videos con pitch y oferta → compartir con coach → llevar a mentoría de cierre</li>
-      </ul>
-    </div>
-    <div id="d-sem56" class="detail-panel">
-      <h4>Sem 5–6 — Lanzamiento y cierre</h4>
-      <ul>
-        <li>Ver entrenamiento setter y crear script propio</li>
-        <li>Llenar trackers (FB ADS / orgánico / setter / cierre)</li>
-        <li>Verificar todo listo para cierre de ventas</li>
-        <li>Preparar PRE-PITCH para mentoría de ventas (grabarse en llamadas)</li>
-        <li>Sem 6: verificar KPIs, optimizar campañas, pedir CEO Dashboard</li>
+        <li>Revisión semanal de avances con el coach</li>
+        <li>Identificar bloqueos y definir próximos pasos</li>
+        <li>Verificar cumplimiento de tareas de la semana anterior</li>
+        <li>Ajustar prioridades según el momento del proceso</li>
       </ul>
     </div>
   </div>
+
+  <!-- Divider -->
+  <div style="border-top: 1.5px dashed var(--color-border-tertiary); margin: 12px 0 4px 90px; position:relative;">
+    <span style="position:absolute; top:-9px; left:12px; background: var(--color-background-primary); padding: 0 6px; font-size:10px; color:var(--color-text-tertiary); font-weight:500;">SESIONES SEMANALES — SEGÚN TIPO DE CLIENTE</span>
+  </div>
+
+
 
   <!-- ---- ROW: Con Startfly ---- -->
   <div class="timeline-row" style="margin-top:4px;">
